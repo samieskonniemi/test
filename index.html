@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API</title>
+
+        <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+    <div class="row">
+        <div class="col">
+            <p class="h1 d-flex justify-content-center">COCKTAIL PARTY</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <label for="alc-drinks">Choose an alcoholic drink:</label>
+            <br>
+            <select id="alc-drinks">
+            <option value="Choose an alcoholic drink"></option>
+            </select>
+            <br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onclick="showAlcDrinkInfo(url_alc_list)">Show alcoholic drink info</button>
+            <br><br>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onclick="getDrinkById()">PAINA</button>
+            <br><br>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            <label for="non-alc-drinks">Choose a non-alcoholic drink:</label>
+            <br>
+            <select id="non-alc-drinks">
+            <option value="">Choose a non-alcoholic drink</option>
+            </select>
+            <br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onclick="showNonAlcDrinkInfo(url_non_alc_list)">Show non-alcoholic drink info</button>
+            <br><br>
+        </div>
+    </div>
+
+    <!-- <div class="row">
+        <div class="col">
+            <label for="search-drink">Search drink:</label>
+            <br>
+            <input type="text" id="search-drink" name="search drink">
+            <br><br>
+        </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onclick="searchDrinkUrl(), searchDrink(searchDrinkUrl)">Search drink</button>
+            <br><br>
+        </div>
+    </div> -->
+
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onclick="getRandomDrink(url_random_drink)">Get random drink</button>
+            <br><br>
+        </div>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p id="drink-info">
+                <!-- <img src="https://www.thecocktaildb.com/images/ingredients/gin-Small.png"/> -->
+            </p>
+        </div>
+    </div>
+
+<!-- https://www.thecocktaildb.com/api.php -->
+
+<script>
+
+
+
+const url_alc_list = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Alcoholic";
+const url_non_alc_list = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic";
+const url_search_drink = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=";
+const url_random_drink = "https://www.thecocktaildb.com/api/json/v1/1/random.php";
+const url_drink_id = "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=";
+// let drink_osoite = url_drink_id + showAlcDrinkInfo();
+
+// Get all alcoholic drinks
+async function getDrinksAlc(url_alc_list) {
+
+    let obj = await fetch(url_alc_list);
+    var text = JSON.parse(await obj.text());
+    let tulos = "";
+
+    for (let x in text.drinks) {
+
+        tulos += "<option value='" + text.drinks[x].strDrink + "'> " + text.drinks[x].strDrink + "</option>";
+        // console.log("Drink name: " + text.drinks[x].strDrink);
+
+    }
+
+    document.getElementById("alc-drinks").innerHTML = (tulos);
+
+}
+getDrinksAlc(url_alc_list);
+
+
+// Get all non-alcoholic drinks
+async function getDrinksNonAlc(url_non_alc_list) {
+
+    let obj = await fetch(url_non_alc_list);
+    var text = JSON.parse(await obj.text());
+    let tulos = "";
+
+    for (let x in text.drinks) {
+
+        tulos += "<option value='" + text.drinks[x].strDrink + "'> " + text.drinks[x].strDrink + "</option>";
+        // console.log("Drink name: " + text.drinks[x].strDrink);
+
+    }
+    document.getElementById("non-alc-drinks").innerHTML = (tulos);
+}
+getDrinksNonAlc(url_non_alc_list);
+
+//---------------------------------------------------------------------------------------------------------------------------------
+// Get a selected alcoholic drink id
+function getDrinkById() {
+    let drink = showAlcDrinkInfo();
+    document.getElementById("drink-info").innerHTML = drink;
+
+}
+
+// Show alcoholic drink info
+async function showAlcDrinkInfo(url_alc_list) {
+
+    let obj = await fetch(url_alc_list);
+    var text = JSON.parse(await obj.text());
+    let alc_drink = document.getElementById("alc-drinks").value;
+    // let drink_url = getDrinkById();
+    let tulos="";
+
+    for (let x in text.drinks) {
+
+            let drink_name = text.drinks[x].strDrink;
+            let drink_ID = text.drinks[x].idDrink;
+            let drink_img = text.drinks[x].strDrinkThumb;
+
+        if (drink_name == alc_drink){
+            tulos = "Name: " + drink_name +
+            "<br>" + "ID: " + drink_ID +
+            "<br>" + "<img src=" + drink_img + "/preview" + ">";
+            // break;
+        }
+        // return drink_ID;
+
+    }
+    console.log(tulos);
+    document.getElementById("drink-info").innerHTML = tulos;
+    // return drink_ID;
+
+}
+
+
+// Show non-alcoholic drink info
+async function showNonAlcDrinkInfo(url_non_alc_list) {
+
+    let obj = await fetch(url_non_alc_list);
+    var text = JSON.parse(await obj.text());
+    let non_alc_drink = document.getElementById("non-alc-drinks").value;
+    let tulos = "";
+
+    for (let x in text.drinks) {
+
+        let drink_name = text.drinks[x].strDrink;
+        let drink_ID = text.drinks[x].idDrink;
+        let drink_img = text.drinks[x].strDrinkThumb;
+
+        if (drink_name == non_alc_drink){
+            tulos = "Name: " + drink_name +
+            "<br>" + "ID: " + drink_ID +
+            "<br>" + "<img src=" + drink_img + "/preview" + ">";
+            break;
+        }
+    }
+    console.log(tulos);
+    document.getElementById("drink-info").innerHTML = tulos;
+}
+
+// Get "search drink" url
+// function searchDrinkUrl () {
+
+    // return new_search_url + search_drink;
+    // console.log(new_search_url + search_drink);
+    // document.getElementById("drink-info").innerHTML = new_search_url + search_drink;
+
+// }
+
+// Search drink
+// async function searchDrink(searchDrinkUrl) {
+
+//     let obj = await fetch(searchDrinkUrl);
+//     var text = JSON.parse(await obj.text());
+//     let search_drink = document.getElementById("search-drink").value;
+//     let tulos = "";
+
+//     for (let x in text.drinks) {
+
+//         let drink_name = text.drinks[x].strDrink;
+//         let drink_ID = text.drinks[x].idDrink;
+//         let drink_img = text.drinks[x].strDrinkThumb;
+//         let search_url = text.drinks[x].strDrink + "Margarita";
+
+
+//         if (search_drink == text.drinks[x].strDrink) {
+//             tulos = "Name: " + drink_name +
+//             "<br>" + "ID: " + drink_ID +
+//             "<br>" + "<img src=" + drink_img + "/preview" + ">";
+//             break;
+//         }
+//     }
+
+//     console.log(tulos);
+//     document.getElementById("drink-info").innerHTML = tulos;
+
+// }
+
+async function getRandomDrink(url_random_drink) {
+
+    let obj = await fetch(url_random_drink);
+    var text = JSON.parse(await obj.text());
+    // let search_drink = document.getElementById("search-drink").value;
+    let tulos = "";
+
+
+    for (let x in text.drinks) {
+
+        let drink_name = text.drinks[x].strDrink;
+        let drink_ID = text.drinks[x].idDrink;
+        let drink_img = text.drinks[x].strDrinkThumb;
+        let drink_category = text.drinks[x].strCategory;
+        let drink_alc_non_alc = text.drinks[x].strAlcoholic;
+        let drink_glass = text.drinks[x].strGlass;
+        let drink_instructions = text.drinks[x].strInstructions;
+        let drink_tags = text.drinks[x].strTags;
+        let drink_iba = text.drinks[x].strIBA;
+        let drink_incredients1 = text.drinks[x].strIngredient1;
+        let drink_incredients2 = text.drinks[x].strIngredient2;
+        let drink_incredients3 = text.drinks[x].strIngredient3;
+        let drink_incredients4 = text.drinks[x].strIngredient4;
+        let drink_incredients5 = text.drinks[x].strIngredient5;
+        let drink_incredients6 = text.drinks[x].strIngredient6;
+        let drink_measurement1 = text.drinks[x].strMeasure1
+        let drink_measurement2 = text.drinks[x].strMeasure2
+        let drink_measurement3 = text.drinks[x].strMeasure3
+        let drink_measurement4 = text.drinks[x].strMeasure4
+        let drink_measurement5 = text.drinks[x].strMeasure5
+
+
+        tulos = "Name: " + drink_name +
+        // "<br>" + "ID: " + drink_ID +
+        "<br>" + "Category: " + drink_category +
+        "<br>" + "Drink type: " + drink_alc_non_alc +
+        "<br>" + "Glass type: " + drink_glass +
+
+        "<br><br>" + "Incredients: " +
+        "<br><br>" + drink_incredients1 + " : " + drink_measurement1 +
+        "<br>" + drink_incredients2 + " : " + drink_measurement2 +
+        "<br>" + drink_incredients3 + " : " + drink_measurement3 +
+        "<br>" + drink_incredients4 + " : " + drink_measurement4 +
+        "<br>" + drink_incredients5 + " : " + drink_measurement5 +
+
+        "<br><br>" + "Drink instructions: " +
+        "<br><br>" + drink_instructions +
+        "<br><br>" + "<img src=" + drink_img + "/preview" + ">";
+
+        // "<br>" + "Drink IBA: " + drink_iba +
+        // "<br>" + "Drink tags: " + drink_tags +
+
+
+        break;
+    }
+
+
+    console.log(tulos);
+    document.getElementById("drink-info").innerHTML = tulos;
+
+}
+
+</script>
+
+
+</body>
+</html>
