@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies API</title>
+
+        <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+    <div class="row">
+        <div class="col">
+            <p class="h1 d-flex justify-content-center">MOVIES API</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <label for="directors">Choose a director:</label>
+            <br>
+            <select id="directors">
+            <option value="Choose a director"></option>
+            </select>
+            <br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onclick="showDirInfo(url_directors)">Show director info</button>
+            <br><br>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <label for="actors">Choose an actor:</label>
+            <br>
+            <select id="actors">
+            <option value="Choose an actor"></option>
+            </select>
+            <br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onclick="getActors(url_actors)">Show actor info</button>
+            <br><br>
+        </div>
+    </div>
+
+   
+    </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p id="info">
+                <!-- <img src="https://www.thecocktaildb.com/images/ingredients/gin-Small.png"/> -->
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+
+            <H4>Enter director info:</H4>
+
+            <form method="post">
+                <label for="dir-fname">First name:</label>
+                <input type="text" id="dir-fname" name="dir-fname"><br><br>
+                <label for="dir-lname">Last name:</label>
+                <input type="text" id="dir-lname" name="dir-lname"><br><br>
+                <!-- <label for="dir-img">Select an image:</label>
+                <input type="file" id="dir-img" name="dir-img"><br><br> -->
+                <input type="button" id="dir-submit" value="Submit" onclick="insertDirector()">
+              </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <H4 id="dir-info"></H4>
+        </div>
+    </div>
+
+<script>
+
+const url_directors = "http://localhost/movie_db_api/all_directors.php";
+const url_actors = "http://localhost/movie_db_api/all_actors.php";
+const url_insert_director = "http://localhost/movie_db_api/insert_director.php";
+
+
+async function getDirectors(url_directors) {
+
+    let obj = await fetch(url_directors);
+    var text = JSON.parse(await obj.text());
+    let tulos;
+
+    for (let x in text) {
+
+    tulos += "<option value='" + text[x].dfname + " " + text[x].dlname + "'> " + text[x].dfname + " " + text[x].dlname + "</option>";
+    // console.log("Drink name: " + text.drinks[x].strDrink);
+
+    }
+    document.getElementById("directors").innerHTML = (tulos);
+}
+getDirectors(url_directors);
+
+async function getActors(url_actors) {
+
+    let obj = await fetch(url_actors);
+    var text = JSON.parse(await obj.text());
+    let tulos;
+
+    for (let x in text) {
+
+    tulos += "<option value='" + text[x].afname + " " + text[x].alname + "'> " + text[x].afname + " " + text[x].alname + "</option>";
+    // console.log("Drink name: " + text.drinks[x].strDrink);
+
+    }
+    document.getElementById("actors").innerHTML = (tulos);
+}
+getActors(url_actors);
+
+async function insertDirector(url_insert_director) {
+
+    // let dir_fname = document.getElementById("dir-fname").value;
+    // let dir_lname = document.getElementById("dir-lname").value;
+
+    // const dir_obj = {
+    //     firstName: dir_fname,
+    //     lastName: dir_lname
+    // };
+
+    // const formData = new FormData();
+
+    // formData.append("firstName", dir_fname);
+    // formData.append("lastName", dir_lname); 
+
+    await fetch("http://localhost/movie_db_api/insert_director.php", {
+        method: 'POST', 
+        // body: JSON.stringify(dir_obj),
+        body: JSON.stringify({
+            firstName: document.getElementById('dir-fname').value,
+            lastName: document.getElementById('dir-lname').value
+        }),
+        headers: {
+            "Content-Type": "application/json",
+        },
+        
+    })
+        .then((response) => response.json())
+        .then((dir_obj) => {
+        console.log("Success:", dir_obj);
+        })
+        .catch((error) => {
+        console.error("Error:", error);
+        });
+
+    // document.getElementById("dir-info").innerHTML = (dir_obj);
+
+}
+
+</script>
+
+
+</body>
+</html>
